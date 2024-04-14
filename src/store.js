@@ -5,12 +5,13 @@ const initialState = {
     loan: 0,
     loanPurpose: "",
 };
+const ACCOUNT_DEPOSIT= "account/deposit";
 /*
 * DOMAIN/ACTION
 * */
 function reducer(state = initialState, action) {
     switch (action.type) {
-        case "account/deposit":
+        case ACCOUNT_DEPOSIT:
             return {
                 ...state,
                 balance: state.balance + action.payload,
@@ -43,6 +44,7 @@ function reducer(state = initialState, action) {
             return state;
 
     }
+
 }
 
 const store =createStore(reducer);
@@ -50,7 +52,7 @@ const store =createStore(reducer);
 /*ACTION CREATORS*/
 
 function deposit(amount) {
-    return {type: "account/deposit", payload: amount}
+    return {type: ACCOUNT_DEPOSIT, payload: amount}
 }
 
 function withdraw(amount) {
@@ -70,6 +72,11 @@ function payLoan() {
 
 store.dispatch(deposit(5000));
 store.dispatch(withdraw(200));
+console.log(store.getState());
 
+store.dispatch(requestLoan(2000, "Buy car"));
+console.log(store.getState());
+
+store.dispatch(payLoan())
 console.log(store.getState());
 
