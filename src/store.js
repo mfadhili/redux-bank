@@ -8,7 +8,6 @@ const initialState = {
 /*
 * DOMAIN/ACTION
 * */
-
 function reducer(state = initialState, action) {
     switch (action.type) {
         case "account/deposit":
@@ -48,18 +47,29 @@ function reducer(state = initialState, action) {
 
 const store =createStore(reducer);
 
-store.dispatch({type: "account/deposit", payload: 500});
+/*ACTION CREATORS*/
 
-console.log(store.getState());
+function deposit(amount) {
+    return {type: "account/deposit", payload: amount}
+}
 
-store.dispatch({type: "account/withdraw", payload: 300});
-console.log(store.getState());
-store.dispatch({
-    type: 'account/requestLoan',
-    payload: {
-        amount: 100,
-        purpose: "Buy a car"
+function withdraw(amount) {
+    return {type: "account/withdraw", payload: amount}
+}
+
+function requestLoan(amount, purpose) {
+    return {
+        type: 'account/requestLoan',
+        payload: { amount,purpose }
     }
-});
+}
+
+function payLoan() {
+    return {type:"account/payLoan"}
+}
+
+store.dispatch(deposit(5000));
+store.dispatch(withdraw(200));
+
 console.log(store.getState());
-store.dispatch({type:"account/payLoan"})
+
