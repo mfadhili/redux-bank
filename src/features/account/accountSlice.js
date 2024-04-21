@@ -2,6 +2,7 @@ const initialStateAccount = {
     balance: 0,
     loan: 0,
     loanPurpose: "",
+    isLoading: false,
 };
 const ACCOUNT_DEPOSIT = "account/deposit";
 
@@ -14,6 +15,7 @@ export default function accountReducer(state = initialStateAccount, action) {
             return {
                 ...state,
                 balance: state.balance + action.payload,
+                isLoading: false,
             };
         case "account/withdraw":
             return {
@@ -39,13 +41,70 @@ export default function accountReducer(state = initialStateAccount, action) {
                 loanPurpose: action.payload.purpose,
                 balance: state.balance + action.payload.amount,
             }
+        case "account/convertingCurrency":
+            return {
+                ...state,
+                isLoading: true,
+            }
         default:
             return state;
     }
 }
 
-export function deposit(amount) {
-    return {type: ACCOUNT_DEPOSIT, payload: amount}
+/*
+* FRANKFURTER API USAGE
+*  const host = 'api.frankfurter.app';
+fetch(`https://${host}/latest?amount=10&from=GBP&to=USD`)
+  .then(resp => resp.json())
+  .then((data) => {
+    alert(`10 GBP = ${data.rates.USD} USD`);
+  });
+  *
+  *
+  * EXAMPLE PAYLOAD
+  *
+  * {
+    "amount": 23,
+    "base": "EUR",
+    "date": "2024-04-18",
+    "rates": {
+        "USD": 24.562
+        }
+    }
+  * */
+
+const FRANKFURTER = 'api.frankfurter.app'
+
+export function deposit(amount, currency) {
+    if (currency === 'USD') {
+        return {
+            type: ACCOUNT_DEPOSIT,
+            payload: amount
+        }
+    }
+    /*ASYNC ACTION TO BE PROCESSED FIRST*/
+    return async function (dispatch, getState) {
+        // API CALL
+        dispatch({
+            type: "account/convertingCurrency"
+        })
+        const resp = await fetch(`https://${FRANKFURTER}/latest?amount=${amount}&from=${currency}&to=USD`);
+        const data = await resp.json();
+        console.log(data);
+        const converted = data.rates.USD;
+        // RETURN ACTION
+        dispatch(
+            {
+                type: ACCOUNT_DEPOSIT,
+                payload: converted,
+            }
+        )
+        // return {
+        //     type: ACCOUNT_DEPOSIT,
+        //     payload: converted,
+        // }
+
+    }
 }
 
 export function withdraw(amount) {
