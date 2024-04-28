@@ -4,63 +4,18 @@
 * 2. REDUCER FUNCTION
 * 3. ACTION CREATORS
 * */
-import {createSlice} from "@reduxjs/toolkit";
-
-const initialState = {
+const initialStateAccount = {
     balance: 0,
     loan: 0,
     loanPurpose: "",
     isLoading: false,
 };
+const ACCOUNT_DEPOSIT = "account/deposit";
 
-const accountSlice = createSlice({
-    name: "account",
-    initialState,
-    reducers: {
-        deposit(state, action)  {
-            state.balance += action.payload;
-        },
-        withdraw(state, action)  {
-            state.balance -= action.payload;
-        },
-        requestLoan: {
-            prepare(amount, purpose)  {
-                return {
-                    payload: {
-                        amount: amount,
-                        purpose: purpose
-                    }
-                }
-            },
-            reducer(state, action)  {
-                if (state.loan > 0) {
-                    return;
-                }
-                state.loan = action.payload.amount;
-                state.loanPurpose =  action.payload.purpose;
-                state.balance = state.balance + action.payload.amount;
-            }
-        },
-        payLoan(state, action)  {
-            state.balance -= state.loan;
-            state.loan = 0;
-            state.loanPurpose = ''
-        }
-    }
-});
-
-console.log(accountSlice);
-
-export const {deposit, withdraw, requestLoan,payLoan} = accountSlice.actions
-
-export default accountSlice.reducer;
-
-/*const ACCOUNT_DEPOSIT = "account/deposit";
-
-/!*
+/*
 REDUCER
 * DOMAIN/ACTION
-* *!/
+* */
 
 export default function accountReducer(state = initialStateAccount, action) {
     switch (action.type) {
@@ -102,7 +57,7 @@ export default function accountReducer(state = initialStateAccount, action) {
         default:
             return state;
     }
-}*/
+}
 
 /*
 * FRANKFURTER API USAGE
@@ -117,7 +72,7 @@ fetch(`https://${host}/latest?amount=10&from=GBP&to=USD`)
   * EXAMPLE PAYLOAD
   *
   * {
-    "amount": 23,accountSlice
+    "amount": 23,
     "base": "EUR",
     "date": "2024-04-18",
     "rates": {
@@ -129,7 +84,7 @@ fetch(`https://${host}/latest?amount=10&from=GBP&to=USD`)
 
 /* ACTION CREATOR*/
 
-/*const FRANKFURTER = 'api.frankfurter.app'
+const FRANKFURTER = 'api.frankfurter.app'
 
 export function deposit(amount, currency) {
     if (currency === 'USD') {
@@ -138,7 +93,7 @@ export function deposit(amount, currency) {
             payload: amount
         }
     }
-    /!*ASYNC ACTION TO BE PROCESSED FIRST*!/
+    /*ASYNC ACTION TO BE PROCESSED FIRST*/
     return async function (dispatch, getState) {
         // API CALL
         dispatch({
@@ -161,9 +116,8 @@ export function deposit(amount, currency) {
         // }
 
     }
-}*/
+}
 
-/*
 export function withdraw(amount) {
     return {type: "account/withdraw", payload: amount}
 }
@@ -177,4 +131,4 @@ export function requestLoan(amount, purpose) {
 
 export function payLoan() {
     return {type: "account/payLoan"};
-}*/
+}

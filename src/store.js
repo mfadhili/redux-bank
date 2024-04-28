@@ -21,7 +21,7 @@ const store = configureStore({
         account: accountReducer,
         customer: customerReducer,
     }
-})
+});
 
 export default store;
 /*ACTION CREATORS*/
